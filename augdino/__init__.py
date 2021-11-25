@@ -10,9 +10,9 @@ from .wave.reverb import Reverb
 
 from .spectrogram.freq_mask import CustomFrequencyMasking as FreqMask
 from .spectrogram.time_mask import CustomTimeMasking as TimeMask
-from torchaudio.transforms import TimeStretch
+from .spectrogram.time_stretch import CustomTimeStretch as TimeStretch
 
-from .compose import Compose
+from .utils.compose import Compose
 
 from typing import List, Dict, Any
 

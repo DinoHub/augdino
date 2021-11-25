@@ -14,5 +14,5 @@ setuptools.setup(
     },
     license='MIT',
     packages=['augdino'],
-    install_requires=['torch>=1.8.1', 'torchaudio>=0.8.1', 'librosa==0.8.1', 'julius>=0.2.6'],
+    install_requires=['torch>=1.8.1,<1.9', 'torchaudio>=0.8.1,<0.9', 'librosa==0.8.1', 'julius>=0.2.6', 'primePy>=1.3'],
 )

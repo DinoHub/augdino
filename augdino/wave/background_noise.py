@@ -4,8 +4,8 @@ from typing import Union, List
 
 import torch
 
-from .utils.io import Audio
-from .utils.file import find_audio_files
+from ..utils.io import Audio
+from ..utils.file import find_audio_files
 
 def calculate_rms(samples):
     """

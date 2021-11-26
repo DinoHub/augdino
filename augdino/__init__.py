@@ -1,20 +1,20 @@
-from .wave.background_noise import AddBackgroundNoise
-from .wave.clip_distortion import ClipDistortion
-from .wave.colored_noise import AddColoredNoise
-from .wave.gain import Gain
-from .wave.low_pass import LowPassFilter
-from .wave.polarity_inversion import PolarityInversion
-from .wave.reverse_overlay import ReverseOverlay
-from .wave.shift import Shift
-from .wave.reverb import Reverb
-from .wave.pitch_shift import PitchShift
+from wave.background_noise import AddBackgroundNoise
+from wave.clip_distortion import ClipDistortion
+from wave.colored_noise import AddColoredNoise
+from wave.gain import Gain
+from wave.low_pass import LowPassFilter
+from wave.polarity_inversion import PolarityInversion
+from wave.reverse_overlay import ReverseOverlay
+from wave.shift import Shift
+from wave.reverb import Reverb
+from wave.pitch_shift import PitchShift
 
-from .spectrogram.freq_mask import CustomFrequencyMasking as FreqMask
-from .spectrogram.time_mask import CustomTimeMasking as TimeMask
-from .spectrogram.time_stretch import CustomTimeStretch as TimeStretch
+from spectrogram.freq_mask import CustomFrequencyMasking as FreqMask
+from spectrogram.time_mask import CustomTimeMasking as TimeMask
+from spectrogram.time_stretch import CustomTimeStretch as TimeStretch
 
-from .common.common import CustomMelSpectrogram
-from .utils.compose import Compose
+from common.common import CustomMelSpectrogram
+from utils.compose import Compose
 
 from typing import List, Dict, Any, Optional
 

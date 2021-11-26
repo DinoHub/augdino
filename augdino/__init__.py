@@ -38,16 +38,16 @@ SPEC_AUGMENTATIONS = {
 }
 
 def compose_transformations(
-    wave_augment_cfg: List[Dict[str, Any]],
     mel_transform_cfg: Optional[Dict[str, Any]] = None,
+    wave_augment_cfg: Optional[List[Dict[str, Any]]] = None,
     spec_augment_cfg: Optional[List[Dict[str, Any]]] = None,
     ) -> Compose:
     
     compose_list = []
-
-    for aug_name in wave_augment_cfg.keys():
-        transformation = WAVE_AUGMENTATIONS[aug_name](**wave_augment_cfg[aug_name])
-        compose_list.append(transformation)
+    if wave_augment_cfg is not None:
+        for aug_name in wave_augment_cfg.keys():
+            transformation = WAVE_AUGMENTATIONS[aug_name](**wave_augment_cfg[aug_name])
+            compose_list.append(transformation)
 
     if mel_transform_cfg is not None:
         compose_list.append(CustomMelSpectrogram(**mel_transform_cfg))

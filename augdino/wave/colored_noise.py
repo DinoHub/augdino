@@ -3,7 +3,7 @@ from torch.fft import irfft, rfft
 import random
 from math import ceil
 
-from .utils.io import Audio
+from ..utils.io import Audio
 
 def calculate_rms(samples):
     """

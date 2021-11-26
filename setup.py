@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='augdino',
-    version='0.0.1',
+    version='0.0.2',
     author='Daniel Leong',
     author_email='daniel.leongsj@gmail.com',
     description='A module for torch-based audio data augmentations',
@@ -13,6 +13,6 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/DinoHub/augdino/issues"
     },
     license='MIT',
-    packages=['augdino'],
+    packages=find_packages(),
     install_requires=['torch>=1.8.1,<1.9', 'torchaudio>=0.8.1,<0.9', 'librosa==0.8.1', 'julius>=0.2.6', 'primePy>=1.3'],
 )

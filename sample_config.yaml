@@ -1,0 +1,64 @@
+name: sample
+
+wave_cfg:
+  - shift:
+      p: 0.5
+      min_shift: -0.1
+      max_shift: 0.1
+      shift_unit: 'fraction'
+      rollover: false
+      sample_rate: 16000
+
+  - background_noise:
+      p: 0.6               # probability of applying this augmentation
+      s3_bucket_name: 'sample'
+      s3_key: 'wham_noise_mono_tr.zip'
+      extract_path: '/sample/wham_noises_tr'
+      local_path: '${.extract_path}/tr'
+      min_snr_in_db: 3      # minimum SNR
+      max_snr_in_db: 10     # maximum SNR for randomizer when adding background noise
+      sample_rate: 16000
+
+  - colored_noise:
+      p: 0.6
+      min_snr_in_db: 10
+      max_snr_in_db: 20
+      min_f_decay: -2.0
+      max_f_decay: 2.0
+      sample_rate: 160000
+
+  - polarity_inversion:
+      p: 0.5
+
+  - clip_distortion:
+      p: 0.8
+      min_percent_threshold: 0
+      max_percent_threshold: 15
+
+mel_transform_cfg:
+  f_max: 8000           # max freq
+  f_min: 0
+  n_fft: 512            # for mel spectrogram preprocess
+  n_mels: 128           # Number of mel energies
+  win_length: 400       # Change if sr != 16000
+  hop_length: 160       # Change if sr != 16000
+  squeeze: true
+  logmel: true
+  transpose_at_end: false
+
+spec_augment_cfg:
+  - freq_mask:
+      freq_mask_param: 10
+      num_freq_masks: 1
+      p: 0.5
+
+  - time_mask:
+      time_mask_param: 20
+      num_time_masks: 1
+      p: 0.5
+      
+  - time_stretch:
+      fixed_rates: [0.85, 0.9, 0.95, 1.05, 1.1, 1.15]
+      p: 0.5
+
+

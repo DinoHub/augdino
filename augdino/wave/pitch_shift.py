@@ -143,7 +143,7 @@ class PitchShift(torch.nn.Module):
 
     def randomize_params(self) -> None:
 
-        self.transform_parameters['transpositions'] = random.choices(self.fast_shifts, k=1)
+        self.transform_parameters['transpositions'] = random.choice(self.fast_shifts)
 
     def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 

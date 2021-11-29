@@ -134,7 +134,7 @@ class PitchShift(torch.nn.Module):
             and x <= semitones_to_ratio(max_transpose_semitones)
             and x != 1,
         )
-        self.sample_rate: 16000
+        self.sample_rate = 16000
         self.n_fft = sample_rate // 64
         self.hop_length = self.n_fft // 32
         self.p = 0.5

@@ -16,7 +16,7 @@ from .spectrogram.common import *
 
 from .utils.compose import Compose
 
-from torchaudio.transforms import Spectrogram
+from torchaudio.transforms import Spectrogram, MelScale
 from typing import List, Dict, Any, Optional
 
 WAVE_AUGMENTATIONS = {
@@ -34,6 +34,7 @@ WAVE_AUGMENTATIONS = {
 
 SPEC_AUGMENTATIONS = {
     'spectrogram': Spectrogram,
+    'mel_scale': MelScale,
     'freq_mask': FreqMask,
     'time_mask': TimeMask,
     'time_stretch': TimeStretch,

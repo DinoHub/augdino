@@ -16,8 +16,9 @@ class LogMelTransform(torch.nn.Module):
 
 class Transpose(torch.nn.Module):
     
-    def __init__(self) -> None:
+    def __init__(self, dim=None) -> None:
         super(Transpose, self).__init__()
+        self.dim = dim
 
     def __call__(self, tensor: Tensor) -> Tensor:
         return tensor.T

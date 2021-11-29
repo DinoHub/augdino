@@ -12,10 +12,11 @@ from .wave.pitch_shift import PitchShift
 from .spectrogram.freq_mask import CustomFrequencyMasking as FreqMask
 from .spectrogram.time_mask import CustomTimeMasking as TimeMask
 from .spectrogram.time_stretch import CustomTimeStretch as TimeStretch
+from .spectrogram.common import *
 
-from .common.common import CustomMelSpectrogram
 from .utils.compose import Compose
 
+from torchaudio.transforms import Spectrogram
 from typing import List, Dict, Any, Optional
 
 WAVE_AUGMENTATIONS = {
@@ -32,13 +33,19 @@ WAVE_AUGMENTATIONS = {
 }
 
 SPEC_AUGMENTATIONS = {
+    'spectrogram': Spectrogram,
     'freq_mask': FreqMask,
     'time_mask': TimeMask,
     'time_stretch': TimeStretch,
+    'custom_melspec': CustomMelSpectrogram,
+    # common transforms
+    'transpose': Transpose,
+    'squeeze': Squeeze,
+    'unsqueeze': Unsqueeze,
+    'log_transform': LogMelTransform,
 }
 
 def compose_transformations(
-    mel_transform_cfg: Optional[Dict[str, Any]] = None,
     wave_augment_cfg: Optional[List[Dict[str, Any]]] = None,
     spec_augment_cfg: Optional[List[Dict[str, Any]]] = None,
     ) -> Compose:
@@ -49,12 +56,11 @@ def compose_transformations(
             transformation = WAVE_AUGMENTATIONS[aug_name](**wave_augment_cfg[aug_name])
             compose_list.append(transformation)
 
-    if mel_transform_cfg is not None:
-        compose_list.append(CustomMelSpectrogram(**mel_transform_cfg))
-
     if spec_augment_cfg is not None:
-        assert mel_transform_cfg is not None, 'Spectrogram augmentation(s) is being added when no melspectrogram configs are in place.'
-        for aug_name in spec_augment_cfg.keys():
+        for idx, aug_name in enumerate(spec_augment_cfg.keys()):
+            if idx == 0: 
+                assert aug_name == 'spectrogram', 'To apply spectrogram augmentations, Spectrogram transformation must come first'
+
             transformation = SPEC_AUGMENTATIONS[aug_name](**spec_augment_cfg[aug_name])
             compose_list.append(transformation)
 

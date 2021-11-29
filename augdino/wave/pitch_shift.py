@@ -145,7 +145,7 @@ class PitchShift(torch.nn.Module):
 
         self.transform_parameters['transpositions'] = random.choice(self.fast_shifts)
 
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 
         output = waveform
 

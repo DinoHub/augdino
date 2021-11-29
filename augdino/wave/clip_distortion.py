@@ -39,7 +39,7 @@ class ClipDistortion:
             a = self.min_percent_threshold, 
             b = self.max_percent_threshold)
     
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
         if random.random() <= self.p:
             self.randomize_parameters()
             

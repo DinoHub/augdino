@@ -20,7 +20,7 @@ class CustomTimeStretch(torch.nn.Module):
     def randomize_parameters(self):
         self.transform_parameters['stretch_rate'] = random.choice(self.fixed_rates)
 
-    def forward(self, spectrogram: torch.Tensor) -> torch.Tensor:
+    def __call__(self, spectrogram: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= 0.5:
             self.randomize_parameters()

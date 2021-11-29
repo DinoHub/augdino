@@ -23,7 +23,7 @@ class PolarityInversion:
 
         self.p = p
 
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
         if random.random() <= self.p:
             waveform = -waveform
         return waveform

@@ -98,7 +98,7 @@ class AddBackgroundNoise:
         self.transform_parameters["background"] = self.random_background(audio, num_samples)
         self.transform_parameters["snr_in_db"] = torch.rand(1) * (self.max_snr_in_db - self.min_snr_in_db) + self.min_snr_in_db 
 
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= self.p:
 

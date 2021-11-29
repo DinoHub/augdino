@@ -166,7 +166,7 @@ class Audio:
 
         return samples
 
-    def forward(
+    def __call__(
         self, file: AudioFile, sample_offset: int = 0, num_samples: int = None
     ) -> Tensor:
         """

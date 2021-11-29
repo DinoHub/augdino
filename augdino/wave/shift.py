@@ -4,7 +4,7 @@ import random
 
 class Shift:
     """
-    Shift the audio forwards or backwards, with or without rollover
+    Shift the audio __call__s or backwards, with or without rollover
     """
 
     def __init__(
@@ -75,7 +75,7 @@ class Shift:
         else:
             self.transform_parameters['num_samples_to_shift'] = random.randint(min_shift_in_samples, max_shift_in_samples)
 
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= self.p:
             self.randomize_parameters(waveform)

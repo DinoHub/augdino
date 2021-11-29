@@ -66,7 +66,7 @@ class LowPassFilter:
             dist.sample()
         )
 
-    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
+    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= self.p:
             self.randomize_parameters()

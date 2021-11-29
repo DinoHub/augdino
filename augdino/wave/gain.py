@@ -29,7 +29,7 @@ class Gain:
         random_gain = random.uniform(self.min_gain_db, self.max_gain_db)
         self.transform_parameters['amplitude_ratio'] = 10 ** (random_gain / 20)
 
-    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
+    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
         if random.random() <= self.p:
             self.randomize_parameters()
             waveform = waveform * self.transform_parameters['amplitude_ratio']

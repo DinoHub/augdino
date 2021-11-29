@@ -28,7 +28,7 @@ class ReverseOverlay:
 
         self.transform_parameters['snr_in_db'] = random.uniform(self.min_snr_in_db, self.max_snr_in_db)
 
-    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
+    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
 
         if random.random() >= self.p:
             return waveform

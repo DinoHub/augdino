@@ -11,7 +11,7 @@ class LogMelTransform(torch.nn.Module):
         super(LogMelTransform, self).__init__()
         self.log_offset = log_offset
 
-    def __call__(self, melspectrogram: Tensor) -> Tensor:
+    def forward(self, melspectrogram: Tensor) -> Tensor:
         return torch.log(melspectrogram + self.log_offset)
 
 class Transpose(torch.nn.Module):
@@ -20,7 +20,7 @@ class Transpose(torch.nn.Module):
         super(Transpose, self).__init__()
         self.dim = dim
 
-    def __call__(self, tensor: Tensor) -> Tensor:
+    def forward(self, tensor: Tensor) -> Tensor:
         return tensor.T
 
 class Unsqueeze(torch.nn.Module):
@@ -29,7 +29,7 @@ class Unsqueeze(torch.nn.Module):
         super(Unsqueeze, self).__init__()
         self.dim = dim
 
-    def __call__(self, tensor: Tensor) -> Tensor:
+    def forward(self, tensor: Tensor) -> Tensor:
         return torch.unsqueeze(tensor, self.dim)
 
 class Squeeze(torch.nn.Module):
@@ -37,7 +37,7 @@ class Squeeze(torch.nn.Module):
         super(Squeeze, self).__init__()
         self.dim = dim
     
-    def __call__(self, tensor: Tensor) -> Tensor:
+    def forward(self, tensor: Tensor) -> Tensor:
         return torch.squeeze(tensor, self.dim)
 
 class CustomMelSpectrogram(torch.nn.Module):
@@ -65,5 +65,5 @@ class CustomMelSpectrogram(torch.nn.Module):
 
         self.composed = Compose(compose_list)
 
-    def __call__(self, waveform: Tensor) -> Tensor:
+    def forward(self, waveform: Tensor) -> Tensor:
         return self.composed(waveform)

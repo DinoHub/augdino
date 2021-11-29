@@ -75,7 +75,7 @@ class Shift:
         else:
             self.transform_parameters['num_samples_to_shift'] = random.randint(min_shift_in_samples, max_shift_in_samples)
 
-    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
+    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= self.p:
             self.randomize_parameters(waveform)

@@ -17,7 +17,7 @@ class CustomFrequencyMasking(torch.nn.Module):
         self.num_freq_masks = num_freq_masks
         self.p = p
 
-    def __call__(self, spectrogram: torch.Tensor) -> torch.Tensor:
+    def forward(self, spectrogram: torch.Tensor) -> torch.Tensor:
         if random.random() <= self.p:
             for _ in range(self.num_freq_masks):
                 spectrogram = self.mask(spectrogram)

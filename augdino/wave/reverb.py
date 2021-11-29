@@ -36,7 +36,7 @@ class Reverb:
         self.transform_parameters['damp_factor'] = random.uniform(self.min_damp_factor, self.max_damp_factor)
         self.transform_parameters['room_size'] = random.uniform(self.min_room_size, self.max_room_size)
 
-    def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
+    def forward(self, waveform: torch.Tensor) -> torch.Tensor:
         if random.random() <= self.p:
             self.randomize_params()
 

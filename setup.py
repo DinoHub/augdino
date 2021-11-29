@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='augdino',
-    version='0.0.2',
+    version='0.0.3',
     author='Daniel Leong',
     author_email='daniel.leongsj@gmail.com',
     description='A module for torch-based audio data augmentations',

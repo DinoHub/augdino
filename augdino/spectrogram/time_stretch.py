@@ -11,18 +11,19 @@ class CustomTimeStretch(torch.nn.Module):
     
         super(CustomTimeStretch, self).__init__()
 
-        self.time_stretches = [TimeStretch(fixed_rate=x) for x in fixed_rates]
+        self.fixed_rates = fixed_rates
         self.p = p
+
+        self.stretch = TimeStretch()
         self.transform_parameters = {}
 
     def randomize_parameters(self):
-        self.transform_parameters['stretch'] = random.choice(self.time_stretches)
+        self.transform_parameters['stretch_rate'] = random.choice(self.fixed_rates)
 
     def __call__(self, spectrogram: torch.Tensor) -> torch.Tensor:
 
         if random.random() <= 0.5:
             self.randomize_parameters()
-            stretch = self.transform_parameters['stretch']
-            spectrogram = stretch(spectrogram)
+            spectrogram = self.stretch(spectrogram, self.transform_parameters['stretch_rate'])
 
         return spectrogram

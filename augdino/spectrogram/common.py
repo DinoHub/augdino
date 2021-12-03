@@ -61,7 +61,8 @@ class ComplexSpectrogram(torch.nn.Module):
         n_fft: int, win_length: int, hop_length: int, 
         normalized: bool = True,        
         ) -> None:
-
+        super(ComplexSpectrogram, self).__init__()
+        
         self.n_fft = n_fft
         self.win_length = win_length
         self.hop_length = hop_length

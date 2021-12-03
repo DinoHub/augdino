@@ -1,64 +1,109 @@
 name: sample
 
-wave_cfg:
-  - shift:
-      p: 0.5
-      min_shift: -0.1
-      max_shift: 0.1
-      shift_unit: 'fraction'
-      rollover: false
+train:
+  wave_augment_cfg:
+    # pitch_shift:
+    #   p: 0.5
+    #   min_transpose_semitones: -4.0
+    #   max_transpose_semitones: 4.0
+    #   sample_rate: 16000
+
+    gain:
+      p: 0.3
+      min_gain_db: -12
+      max_gain_db: 12
+
+    reverb:
+      p: 0.3
+      min_reverb: 20
+      max_reverb: 80
+      min_damp_factor: 20 
+      max_damp_factor: 80
+      min_room_size: 20
+      max_room_size: 70
       sample_rate: 16000
 
-  - background_noise:
-      p: 0.6               # probability of applying this augmentation
-      s3_bucket_name: 'sample'
-      s3_key: 'wham_noise_mono_tr.zip'
-      extract_path: '/sample/wham_noises_tr'
-      local_path: '${.extract_path}/tr'
+    reverse_overlay:
+      p: 0.3
+      min_snr_in_db: 10
+      max_snr_in_db: 30
+
+    background_noise:
+      p: 0.3               # probability of applying this augmentation
+      local_path: '/datasets/wham_noises_tr/tr'
       min_snr_in_db: 3      # minimum SNR
       max_snr_in_db: 10     # maximum SNR for randomizer when adding background noise
       sample_rate: 16000
 
-  - colored_noise:
-      p: 0.6
+    colored_noise:
+      p: 0.3
       min_snr_in_db: 10
       max_snr_in_db: 20
       min_f_decay: -2.0
       max_f_decay: 2.0
-      sample_rate: 160000
+      sample_rate: 16000
 
-  - polarity_inversion:
-      p: 0.5
+    polarity_inversion:
+      p: 0.3
 
-  - clip_distortion:
-      p: 0.8
+    clip_distortion:
+      p: 0.3
       min_percent_threshold: 0
       max_percent_threshold: 15
 
-mel_transform_cfg:
-  f_max: 8000           # max freq
-  f_min: 0
-  n_fft: 512            # for mel spectrogram preprocess
-  n_mels: 128           # Number of mel energies
-  win_length: 400       # Change if sr != 16000
-  hop_length: 160       # Change if sr != 16000
-  squeeze: true
-  logmel: true
-  transpose_at_end: false
+  spec_augment_cfg:
+    spectrogram:
+      n_fft: 512 
+      win_length: 400
+      hop_length: 160
 
-spec_augment_cfg:
-  - freq_mask:
+    # time_stretch:
+    #   p: 0.5
+    #   fixed_rates: [0.85, 0.90, 0.95, 1.05, 1.10, 1.15]
+
+    mel_scale:
+      n_mels: 128
+      f_min: 0
+      f_max: 8000
+      n_stft: 257       # n_fft // 2 + 1
+
+    log_transform:
+      log_offset: 1e-7
+
+    freq_mask:
+      p: 0.5
       freq_mask_param: 10
       num_freq_masks: 1
-      p: 0.5
 
-  - time_mask:
-      time_mask_param: 20
+    time_mask:
+      p: 0.5
+      time_mask_param: 50
       num_time_masks: 1
-      p: 0.5
-      
-  - time_stretch:
-      fixed_rates: [0.85, 0.9, 0.95, 1.05, 1.1, 1.15]
-      p: 0.5
 
+    squeeze:
+      dim: 0
 
+    transpose:
+      dim: null
+
+test:
+  spec_augment_cfg:
+    spectrogram:
+      n_fft: 512 
+      win_length: 400
+      hop_length: 160
+
+    mel_scale:
+      n_mels: 128
+      f_min: 0
+      f_max: 8000
+      n_stft: 257       # n_fft // 2 + 1
+
+    log_transform:
+      log_offset: 1e-7
+
+    squeeze:
+      dim: 0
+
+    transpose:
+      dim: null

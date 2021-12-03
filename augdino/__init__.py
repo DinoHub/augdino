@@ -1,22 +1,8 @@
-from .wave.background_noise import AddBackgroundNoise
-from .wave.clip_distortion import ClipDistortion
-from .wave.colored_noise import AddColoredNoise
-from .wave.gain import Gain
-from .wave.low_pass import LowPassFilter
-from .wave.polarity_inversion import PolarityInversion
-from .wave.reverse_overlay import ReverseOverlay
-from .wave.shift import Shift
-from .wave.reverb import Reverb
-from .wave.pitch_shift import PitchShift
+from .wave import *
+from .spectrogram import *
+from .utils import Compose
 
-from .spectrogram.freq_mask import CustomFrequencyMasking as FreqMask
-from .spectrogram.time_mask import CustomTimeMasking as TimeMask
-from .spectrogram.time_stretch import CustomTimeStretch as TimeStretch
-from .spectrogram.common import *
-
-from .utils.compose import Compose
-
-from torchaudio.transforms import Spectrogram, MelScale
+from torchaudio.transforms import MelScale
 from typing import List, Dict, Any, Optional
 
 WAVE_AUGMENTATIONS = {
@@ -33,17 +19,17 @@ WAVE_AUGMENTATIONS = {
 }
 
 SPEC_AUGMENTATIONS = {
-    'spectrogram': Spectrogram,
+    'spectrogram': ComplexSpectrogram,
     'mel_scale': MelScale,
     'freq_mask': FreqMask,
     'time_mask': TimeMask,
     'time_stretch': TimeStretch,
-    'custom_melspec': CustomMelSpectrogram,
     # common transforms
     'transpose': Transpose,
     'squeeze': Squeeze,
     'unsqueeze': Unsqueeze,
     'log_transform': LogMelTransform,
+    'real_transform': RealTransform
 }
 
 def compose_transformations(

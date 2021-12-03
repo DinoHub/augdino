@@ -1,8 +1,6 @@
 import torch
 from torch import Tensor
-from typing import Optional, List, Dict, Any
-from torchaudio.transforms import MelSpectrogram
-from ..utils.compose import Compose
+from typing import Optional
 
 class LogMelTransform(torch.nn.Module):
 
@@ -40,30 +38,49 @@ class Squeeze(torch.nn.Module):
     def __call__(self, tensor: Tensor) -> Tensor:
         return torch.squeeze(tensor, self.dim)
 
-class CustomMelSpectrogram(torch.nn.Module):
+class RealTransform(torch.nn.Module):
+    def __init__(self, dim) -> None:
+        super(RealTransform, self).__init__()
+        self.dim = dim
+
+    def __call__(self, tensor: Tensor) -> Tensor:
+        return torch.view_as_real(tensor)
+
+class ComplexSpectrogram(torch.nn.Module):
+
     def __init__(
-        self,
-        f_max: int, f_min: int, n_fft: int, n_mels: int, win_length: int, hop_length: int, sample_rate: int = 16000,
-        squeeze: bool = False, logmel: bool = False, transpose_at_end: bool = True
+        self, 
+        n_fft: int, win_length: int, hop_length: int, 
+        normalized: bool = True,        
         ) -> None:
 
-        melspec = MelSpectrogram(
-            sample_rate=sample_rate, 
-            f_max=f_max, f_min=f_min, 
-            n_fft=n_fft, n_mels=n_mels,
-            win_length=win_length, hop_length=hop_length
-            )
-
-        compose_list = []
-        if squeeze:
-            compose_list.append(Squeeze(dim=0))
-        compose_list.append(melspec)
-        if logmel:
-            compose_list.append(LogMelTransform(log_offset=1e-7))
-        if transpose_at_end:
-            compose_list.append(Transpose())
-
-        self.composed = Compose(compose_list)
+        self.n_fft = n_fft
+        self.win_length = win_length
+        self.hop_length = hop_length
+        self.normalized = normalized
+        self.window = torch.hann_window(self.win_length)
 
     def __call__(self, waveform: Tensor) -> Tensor:
-        return self.composed(waveform)
+
+        # pack batch
+        shape = waveform.size()
+        waveform = waveform.reshape(-1, shape[-1])
+
+        spec_f = torch.stft(
+            input=waveform,
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            win_length=self.win_length,
+            window=self.window,
+            normalized=False,
+            center=True,
+            pad_mode='reflect',
+            onesided=True,
+            return_complex=True
+        )
+        # unpack batch
+        spec_f = spec_f.reshape(shape[:-1] + spec_f.shape[-2:])
+
+        if self.normalized:
+            spec_f /= self.window.pow(2.).sum().sqrt()
+        return spec_f

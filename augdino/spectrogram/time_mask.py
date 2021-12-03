@@ -18,7 +18,7 @@ class CustomTimeMasking(torch.nn.Module):
         self.p = p
 
     def __call__(self, spectrogram: torch.Tensor) -> torch.Tensor:
-        if random.random() <= 0.5:
+        if random.random() <= self.p:
             for _ in range(self.num_time_masks):
                 spectrogram = self.mask(spectrogram)
 

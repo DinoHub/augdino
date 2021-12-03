@@ -38,6 +38,14 @@ class Squeeze(torch.nn.Module):
     def __call__(self, tensor: Tensor) -> Tensor:
         return torch.squeeze(tensor, self.dim)
 
+class MagnitudeConvert(torch.nn.Module):
+    def __init__(self, power: float) -> None:
+        super(MagnitudeConvert, self).__init__()
+        self.power = power
+
+    def __call__(self, tensor: Tensor) -> Tensor:
+        return tensor.abs().pow(self.power)
+
 class RealTransform(torch.nn.Module):
     def __init__(self, dim) -> None:
         super(RealTransform, self).__init__()
@@ -58,7 +66,9 @@ class ComplexSpectrogram(torch.nn.Module):
         self.win_length = win_length
         self.hop_length = hop_length
         self.normalized = normalized
-        self.window = torch.hann_window(self.win_length)
+        
+        window = torch.hann_window(self.win_length)
+        self.register_buffer('window', window)
 
     def __call__(self, waveform: Tensor) -> Tensor:
 

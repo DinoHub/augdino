@@ -28,6 +28,7 @@ SPEC_AUGMENTATIONS = {
     'transpose': Transpose,
     'squeeze': Squeeze,
     'unsqueeze': Unsqueeze,
+    'magnitude_convert': MagnitudeConvert,
     'log_transform': LogMelTransform,
     'real_transform': RealTransform
 }

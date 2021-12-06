@@ -128,22 +128,27 @@ class PitchShift(torch.nn.Module):
         output: torch.Tensor [shape=(batch_size, channels, samples)]
             The pitch-shifted batch of audio clips
         """
-        self.fast_shifts = get_fast_shifts(
+
+        self.sample_rate = sample_rate
+        self.n_fft = sample_rate // 64
+        self.hop_length = self.n_fft // 32
+        self.p = p
+
+        fast_shifts = get_fast_shifts(
             sample_rate,
             lambda x: x >= semitones_to_ratio(min_transpose_semitones)
             and x <= semitones_to_ratio(max_transpose_semitones)
             and x != 1,
         )
-        self.sample_rate = 16000
-        self.n_fft = sample_rate // 64
-        self.hop_length = self.n_fft // 32
-        self.p = 0.5
+        self.num_shifts = len(fast_shifts)
+        self.resamplers = [T.Resample(self.sample_rate, int(self.sample_rate / shift)) for shift in fast_shifts]
+        self.stretchers = [T.TimeStretch(fixed_rate=float(1/shift), n_freq=self.n_fft//2+1, hop_length=self.hop_length) for shift in fast_shifts]
 
         self.transform_parameters = {}
 
     def randomize_params(self) -> None:
 
-        self.transform_parameters['transpositions'] = random.choice(self.fast_shifts)
+        self.transform_parameters['idx'] = random.choice(range(self.num_shifts))
 
     def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
 
@@ -151,14 +156,16 @@ class PitchShift(torch.nn.Module):
 
         if random.random() <= self.p:
             self.randomize_params()
-            shift = self.transform_parameters['transpositions']
-            resampler = T.Resample(self.sample_rate, int(self.sample_rate / shift))
+
+            trf_idx = self.transform_parameters['idx']
+            resampler = self.resamplers[trf_idx]
+            stretcher = self.stretchers[trf_idx]
+
             output = torch.stft(output, self.n_fft, self.hop_length)[None, ...]
-            stretcher = T.TimeStretch(fixed_rate=float(1/shift), n_freq=output.shape[2], hop_length=self.hop_length)
             output = stretcher(output)
             output = torch.istft(output[0], self.n_fft, self.hop_length)
             output = resampler(output)
-            del resampler, stretcher
+
             if output.shape[1] >= waveform.shape[1]:
                 output = output[:, :waveform.shape[1]]
             else:

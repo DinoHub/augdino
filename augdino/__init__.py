@@ -3,7 +3,7 @@ from .spectrogram import *
 from .utils import Compose
 
 from torchaudio.transforms import MelScale
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 
 WAVE_AUGMENTATIONS = {
     'background_noise': AddBackgroundNoise,
@@ -34,8 +34,8 @@ SPEC_AUGMENTATIONS = {
 }
 
 def compose_transformations(
-    wave_augment_cfg: Optional[List[Dict[str, Any]]] = None,
-    spec_augment_cfg: Optional[List[Dict[str, Any]]] = None,
+    wave_augment_cfg: Optional[Dict[Dict[str, Any]]] = None,
+    spec_augment_cfg: Optional[Dict[Dict[str, Any]]] = None,
     ) -> Compose:
     
     compose_list = []

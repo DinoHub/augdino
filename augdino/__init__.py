@@ -34,8 +34,8 @@ SPEC_AUGMENTATIONS = {
 }
 
 def compose_transformations(
-    wave_augment_cfg: Optional[Dict[Dict[str, Any]]] = None,
-    spec_augment_cfg: Optional[Dict[Dict[str, Any]]] = None,
+    wave_augment_cfg: Optional[Dict[str, Dict[str, Any]]] = None,
+    spec_augment_cfg: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> Compose:
     
     compose_list = []

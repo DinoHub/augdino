@@ -3,8 +3,8 @@ A module for torch-based audio data augmentations
 
 ## Requirements
 ```bash
-torch>=1.8.1
-torchaudio>=0.8.1
+torch>=1.8.1,<1.9
+torchaudio>=0.8.1,<0.9
 librosa==0.8.1
 julius>=0.2.6
 primePy>=1.3

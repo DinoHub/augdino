@@ -2,7 +2,7 @@ from .wave import *
 from .spectrogram import *
 from .utils import Compose
 
-from torchaudio.transforms import MelScale
+from torchaudio.transforms import MelScale, Resample
 from typing import Dict, Any, Optional
 
 WAVE_AUGMENTATIONS = {
@@ -19,6 +19,7 @@ WAVE_AUGMENTATIONS = {
 }
 
 SPEC_AUGMENTATIONS = {
+    'resample': Resample,
     'spectrogram': ComplexSpectrogram,
     'mel_scale': MelScale,
     'freq_mask': FreqMask,

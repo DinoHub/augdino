@@ -22,6 +22,7 @@ class AddBackgroundNoise:
         max_snr_in_db: float = 30.0,
         p: float = 0.5,
         sample_rate: int = 16000,
+        precache: bool = True,
         *args,
         **kwargs,
     ):
@@ -40,11 +41,15 @@ class AddBackgroundNoise:
         else:
             self.local_path = find_audio_files(local_path)
 
-        if sample_rate is not None:
-            self.audio = Audio(sample_rate=sample_rate, mono=True)
+        self.audio = Audio(sample_rate=sample_rate, mono=True)
 
         if len(self.local_path) == 0:
             raise Exception("There are no supported audio files found.")
+
+        self.precache = precache
+        if self.precache:
+            print('Caching all background noise audio files')
+            self.bg_noises = [self.audio(p) for p in self.local_path]
 
         self.min_snr_in_db = min_snr_in_db
         self.max_snr_in_db = max_snr_in_db
@@ -54,36 +59,51 @@ class AddBackgroundNoise:
         self.p = p
         self.transform_parameters = {}
 
-    def random_background(self, audio: Audio, target_num_samples: int) -> torch.Tensor:
+    def random_background(self, target_num_samples: int) -> torch.Tensor:
         pieces = []
 
         # TODO: support repeat short samples instead of concatenating from different files
 
         missing_num_samples = target_num_samples
-        while missing_num_samples > 0:
-            background_path = random.choice(self.local_path)
-            background_num_samples = audio.get_num_samples(background_path)
+        if self.precache:
+            while missing_num_samples > 0:
+                background_samples = random.choice(self.bg_noises)
+                background_num_samples = background_samples.shape[-1]
 
-            if background_num_samples > missing_num_samples:
-                sample_offset = random.randint(
-                    0, background_num_samples - missing_num_samples
-                )
-                num_samples = missing_num_samples
-                background_samples = audio(
-                    background_path, sample_offset=sample_offset, num_samples=num_samples
-                )
-                missing_num_samples = 0
-            else:
-                background_samples = audio(background_path)
-                missing_num_samples -= background_num_samples
+                if background_num_samples > missing_num_samples:
+                    sample_offset = random.randint(0, background_num_samples - missing_num_samples)
+                    background_samples = background_samples[:,sample_offset:sample_offset + missing_num_samples]
+                    missing_num_samples = 0
+                else:
+                    missing_num_samples -= background_num_samples
 
-            pieces.append(background_samples)
+                pieces.append(background_samples)
+
+        else:
+            while missing_num_samples > 0:
+                background_path = random.choice(self.local_path)
+                background_num_samples = self.audio.get_num_samples(background_path)
+
+                if background_num_samples > missing_num_samples:
+                    sample_offset = random.randint(
+                        0, background_num_samples - missing_num_samples
+                    )
+                    num_samples = missing_num_samples
+                    background_samples = self.audio(
+                        background_path, sample_offset=sample_offset, num_samples=num_samples
+                    )
+                    missing_num_samples = 0
+                else:
+                    background_samples = self.audio(background_path)
+                    missing_num_samples -= background_num_samples
+
+                pieces.append(background_samples)
 
         #  the inner call to rms_normalize ensures concatenated pieces share the same RMS (1)
         #  the outer call to rms_normalize ensures that the resulting background has an RMS of 1
         #  (this simplifies "apply_transform" logic)
-        return audio.rms_normalize(
-            torch.cat([audio.rms_normalize(piece) for piece in pieces], dim=1)
+        return self.audio.rms_normalize(
+            torch.cat([self.audio.rms_normalize(piece) for piece in pieces], dim=1)
         )
 
     def randomize_parameters(self, selected_samples: torch.Tensor, sample_rate: int = None):
@@ -93,9 +113,7 @@ class AddBackgroundNoise:
 
         _, num_samples = selected_samples.shape
 
-        # num_samples (RMS-normalized background noise)
-        audio = self.audio if hasattr(self, "audio") else Audio(sample_rate, mono=True)
-        self.transform_parameters["background"] = self.random_background(audio, num_samples)
+        self.transform_parameters["background"] = self.random_background(num_samples)
         self.transform_parameters["snr_in_db"] = torch.rand(1) * (self.max_snr_in_db - self.min_snr_in_db) + self.min_snr_in_db 
 
     def __call__(self, waveform: torch.Tensor) -> torch.Tensor:
